@@ -25,18 +25,15 @@ llm = ChatGoogleGenerativeAI(
     temperature=0.5
 )
 
-response = llm.invoke([
-    {"role": "system", "content": system_prompt},
-    {"role": "user", "content": "Hi there, how are you?"},
-])
-print(response.content)
+print("Hi, I am Albert, how can I help you today?")
 
-# print("Hi, I am Albert, how can I help you today?")
-
-# while True:
-#     user_input = input("You: ")
-#     if user_input == "exit":
-#         break
-#     print(f"Cool, thanks for sharing that {user_input}")
+while True:
+    user_input = input("You: ")
+    if user_input == "exit":
+        break
+    response = llm.invoke([
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_input},])
+    print(f"Albert: {response.content}")
 
 

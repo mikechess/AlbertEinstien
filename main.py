@@ -40,17 +40,21 @@ chain = prompt | llm | StrOutputParser()
 
 print("Hi, I am Albert, how can I help you today?")
 
-history = []
-# The loop will continue until the user types "exit"
-# The user can ask questions, and the AI will respond based on the system prompt.
-# while True:
-#     user_input = input("You: ")
-#     if user_input == "exit":
-#         break
-#     response = chain.invoke({"input": user_input, "history": history})
-#     print(f"Albert: {response}")
-#     history.append(HumanMessage(content=user_input))
-#     history.append(AIMessage(content=response))
+def chat(user_input, hist):
+    print(user_input, hist)
+    
+    langchain_history = []
+    for item in hist:
+        if item["role"] == "user":
+            langchain_history.append(HumanMessage(content=item["content"]))
+        elif item["role"] == "assistant":
+            langchain_history.append(AIMessage(content=item["content"]))
+            
+    response = chain.invoke({"input": user_input, "history": langchain_history} )
+            
+
+    return "", hist + [{"role": "user", "content": user_input},
+                    {"role": "assistant", "content": response}]
 
 
 page = gr.Blocks(
@@ -66,9 +70,11 @@ with page:
         """
     )
     
-    chatbot = gr.Chatbot()
+    chatbot = gr.Chatbot(type="messages")
 
     msg = gr.Textbox()
+    
+    msg.submit(chat, [msg, chatbot], [msg, chatbot])
     
     clear = gr.Button("Clear Chat")
 
